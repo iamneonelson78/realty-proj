@@ -1,7 +1,12 @@
 -- ============================================================
 -- SEED: Default Admin User
--- Run this in the Supabase SQL Editor AFTER running schema.sql
--- pgcrypto extension is required (already enabled in schema.sql)
+-- Email:    admin@rentcrm.com
+-- Password: Admin@12345
+--
+-- BEFORE running: delete any previous broken attempt:
+--   delete from auth.users where email = 'admin@rentcrm.com';
+--
+-- Run AFTER schema.sql in Supabase SQL Editor.
 -- ============================================================
 
 do $$
@@ -11,25 +16,26 @@ declare
   v_password text := 'Admin@12345';
 begin
 
-  -- Only insert if the user doesn't already exist
   if not exists (select 1 from auth.users where email = v_email) then
 
+    -- 1. Create the auth user
     insert into auth.users (
       id,
       instance_id,
-      role,
       aud,
+      role,
       email,
       encrypted_password,
       email_confirmed_at,
-      confirmation_sent_at,
-      recovery_sent_at,
-      last_sign_in_at,
       raw_app_meta_data,
       raw_user_meta_data,
+      is_super_admin,
       created_at,
       updated_at,
-      is_super_admin
+      confirmation_token,
+      email_change,
+      email_change_token_new,
+      recovery_token
     ) values (
       v_user_id,
       '00000000-0000-0000-0000-000000000000',
@@ -38,17 +44,18 @@ begin
       v_email,
       crypt(v_password, gen_salt('bf')),
       now(),
-      now(),
-      now(),
-      now(),
       '{"provider":"email","providers":["email"]}',
       '{"full_name":"Admin"}',
+      false,
       now(),
       now(),
-      false
+      '',
+      '',
+      '',
+      ''
     );
 
-    -- Required: insert identity record so GoTrue can authenticate via email/password
+    -- 2. Create the identity record (required for GoTrue email/password login)
     insert into auth.identities (
       id,
       user_id,
@@ -62,14 +69,19 @@ begin
       v_user_id,
       v_user_id,
       v_email,
-      jsonb_build_object('sub', v_user_id::text, 'email', v_email),
+      jsonb_build_object(
+        'sub',            v_user_id::text,
+        'email',          v_email,
+        'email_verified', true,
+        'phone_verified', false
+      ),
       'email',
       now(),
       now(),
       now()
     );
 
-    -- Profile is normally created by the trigger, but insert explicitly as fallback
+    -- 3. Create the public profile
     insert into public.profiles (id, email, full_name)
     values (v_user_id, v_email, 'Admin')
     on conflict (id) do nothing;

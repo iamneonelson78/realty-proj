@@ -12,8 +12,13 @@ create table if not exists profiles (
 );
 
 alter table profiles enable row level security;
-create policy "profiles: owner only" on profiles
-  using (id = auth.uid());
+drop policy if exists "profiles: owner only" on profiles;
+drop policy if exists "profiles: owner select" on profiles;
+drop policy if exists "profiles: owner insert" on profiles;
+drop policy if exists "profiles: owner update" on profiles;
+create policy "profiles: owner select" on profiles for select using (id = auth.uid());
+create policy "profiles: owner insert" on profiles for insert with check (id = auth.uid());
+create policy "profiles: owner update" on profiles for update using (id = auth.uid());
 
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = '' as $$
@@ -28,7 +33,7 @@ $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
-  for each row execute function handle_new_user();
+  for each row execute function public.handle_new_user();
 
 -- ============================================================
 -- LISTINGS
@@ -46,6 +51,10 @@ create table if not exists listings (
 );
 
 alter table listings enable row level security;
+drop policy if exists "listings: owner select" on listings;
+drop policy if exists "listings: owner insert" on listings;
+drop policy if exists "listings: owner update" on listings;
+drop policy if exists "listings: owner delete" on listings;
 create policy "listings: owner select" on listings for select using (owner_id = auth.uid());
 create policy "listings: owner insert" on listings for insert with check (owner_id = auth.uid());
 create policy "listings: owner update" on listings for update using (owner_id = auth.uid());
@@ -69,6 +78,10 @@ create table if not exists leads (
 );
 
 alter table leads enable row level security;
+drop policy if exists "leads: owner select" on leads;
+drop policy if exists "leads: owner insert" on leads;
+drop policy if exists "leads: owner update" on leads;
+drop policy if exists "leads: owner delete" on leads;
 create policy "leads: owner select" on leads for select using (owner_id = auth.uid());
 create policy "leads: owner insert" on leads for insert with check (owner_id = auth.uid());
 create policy "leads: owner update" on leads for update using (owner_id = auth.uid());
@@ -88,6 +101,9 @@ create table if not exists lead_messages (
 );
 
 alter table lead_messages enable row level security;
+drop policy if exists "lead_messages: owner select" on lead_messages;
+drop policy if exists "lead_messages: owner insert" on lead_messages;
+drop policy if exists "lead_messages: owner delete" on lead_messages;
 create policy "lead_messages: owner select" on lead_messages for select using (owner_id = auth.uid());
 create policy "lead_messages: owner insert" on lead_messages for insert with check (owner_id = auth.uid());
 create policy "lead_messages: owner delete" on lead_messages for delete using (owner_id = auth.uid());
@@ -106,6 +122,10 @@ create table if not exists reminders (
 );
 
 alter table reminders enable row level security;
+drop policy if exists "reminders: owner select" on reminders;
+drop policy if exists "reminders: owner insert" on reminders;
+drop policy if exists "reminders: owner update" on reminders;
+drop policy if exists "reminders: owner delete" on reminders;
 create policy "reminders: owner select" on reminders for select using (owner_id = auth.uid());
 create policy "reminders: owner insert" on reminders for insert with check (owner_id = auth.uid());
 create policy "reminders: owner update" on reminders for update using (owner_id = auth.uid());
@@ -127,6 +147,10 @@ create table if not exists appointments (
 );
 
 alter table appointments enable row level security;
+drop policy if exists "appointments: owner select" on appointments;
+drop policy if exists "appointments: owner insert" on appointments;
+drop policy if exists "appointments: owner update" on appointments;
+drop policy if exists "appointments: owner delete" on appointments;
 create policy "appointments: owner select" on appointments for select using (owner_id = auth.uid());
 create policy "appointments: owner insert" on appointments for insert with check (owner_id = auth.uid());
 create policy "appointments: owner update" on appointments for update using (owner_id = auth.uid());
