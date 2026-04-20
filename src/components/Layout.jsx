@@ -103,11 +103,15 @@ function NavItem({ to, label, Icon, collapsed, onClick }) {
       onClick={onClick}
       title={collapsed ? label : undefined}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group relative ${
+        `flex items-center gap-3 py-2.5 text-sm font-medium transition-all group relative ${
+          collapsed
+            ? 'w-10 h-10 rounded-full justify-center mx-auto'
+            : 'px-3 rounded-full mx-2'
+        } ${
           isActive
-            ? 'bg-brand-600 text-white shadow-sm'
-            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
-        } ${collapsed ? 'justify-center' : ''}`
+            ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/40'
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md hover:shadow-slate-300 dark:hover:shadow-slate-900'
+        }`
       }
     >
       <Icon size={18} className="shrink-0" />
@@ -147,9 +151,9 @@ export function Layout({ children }) {
   const sidebarWidth = collapsed ? 'w-16' : 'w-56'
 
   const SidebarContent = ({ onNavClick }) => (
-    <div className={`flex flex-col h-full ${collapsed ? 'items-center' : ''}`}>
+    <div className="flex flex-col h-full">
       {/* Nav items */}
-      <nav className="flex flex-col gap-1 flex-1 p-2 pt-3">
+      <nav className="flex flex-col gap-1 flex-1 py-3 pt-8 overflow-y-auto">
         {NAV_ITEMS.map((item) => (
           <NavItem
             key={item.to}
@@ -167,19 +171,17 @@ export function Layout({ children }) {
 
       {/* ── Desktop Sidebar ── */}
       <aside
-        className={`hidden md:flex flex-col ${sidebarWidth} bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 fixed inset-y-0 left-0 top-14 transition-all duration-200 z-30`}
+        className={`hidden md:flex flex-col relative bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 fixed left-0 top-14 bottom-0 transition-all duration-200 z-30 ${collapsed ? 'w-16' : 'w-56'}`}
       >
         <SidebarContent />
-        {/* Collapse toggle at bottom */}
-        <div className={`p-2 border-t border-slate-100 dark:border-slate-800 ${collapsed ? 'flex justify-center' : ''}`}>
-          <button
-            onClick={toggleCollapse}
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="p-2 rounded-xl text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
-          >
-            {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
-          </button>
-        </div>
+        {/* Circle collapse button — centered on right border */}
+        <button
+          onClick={toggleCollapse}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className="absolute top-3 -right-3 w-6 h-6 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-400 dark:hover:border-brand-500 transition-colors"
+        >
+          {collapsed ? <PanelLeftOpen size={12} /> : <PanelLeftClose size={12} />}
+        </button>
       </aside>
 
       {/* ── Mobile Sidebar Overlay ── */}
@@ -245,7 +247,7 @@ export function Layout({ children }) {
       </header>
 
       {/* ── Main content ── */}
-      <div className={`flex-1 flex flex-col mt-14 md:${collapsed ? 'ml-16' : 'ml-56'} transition-all duration-200`}>
+      <div className="flex-1 flex flex-col mt-14">
         <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>
 
