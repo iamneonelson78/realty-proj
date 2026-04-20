@@ -134,6 +134,23 @@ create policy "reminders: owner delete" on reminders for delete using (owner_id 
 create index if not exists reminders_upcoming on reminders(owner_id, remind_at) where done = false;
 
 -- ============================================================
+-- FEEDBACK
+-- ============================================================
+create table if not exists feedback (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users on delete set null,
+  category text not null check (category in ('bug','suggestion','question','other')),
+  body text not null,
+  created_at timestamptz default now()
+);
+
+alter table feedback enable row level security;
+drop policy if exists "feedback: user insert" on feedback;
+drop policy if exists "feedback: user select" on feedback;
+create policy "feedback: user insert" on feedback for insert with check (user_id = auth.uid() or user_id is null);
+create policy "feedback: user select" on feedback for select using (user_id = auth.uid());
+
+-- ============================================================
 -- APPOINTMENTS
 -- ============================================================
 create table if not exists appointments (
