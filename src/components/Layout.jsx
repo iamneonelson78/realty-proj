@@ -53,7 +53,7 @@ function AvatarMenu({ user, onSignOut }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-50">
+        <div className="absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-1rem)] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-50">
           {/* User info */}
           <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
             <p className="text-xs text-slate-500 dark:text-slate-400">Signed in as</p>
@@ -150,7 +150,7 @@ export function Layout({ children }) {
 
   const sidebarWidth = collapsed ? 'w-16' : 'w-56'
 
-  const SidebarContent = ({ onNavClick }) => (
+  const SidebarContent = ({ onNavClick, isCollapsed = collapsed }) => (
     <div className="flex flex-col h-full">
       {/* Nav items */}
       <nav className="flex flex-col gap-1 flex-1 py-3 pt-8 overflow-y-auto">
@@ -158,7 +158,7 @@ export function Layout({ children }) {
           <NavItem
             key={item.to}
             {...item}
-            collapsed={collapsed}
+            collapsed={isCollapsed}
             onClick={onNavClick}
           />
         ))}
@@ -199,7 +199,7 @@ export function Layout({ children }) {
                 <X size={20} />
               </button>
             </div>
-            <SidebarContent onNavClick={() => setMobileOpen(false)} />
+            <SidebarContent onNavClick={() => setMobileOpen(false)} isCollapsed={false} />
           </aside>
         </div>
       )}
