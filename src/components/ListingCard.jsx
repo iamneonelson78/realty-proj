@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MapPin, Megaphone, Pencil, Trash2 } from 'lucide-react'
 import { Badge } from './ui/Badge'
 import { Button } from './ui/Button'
 import { Modal } from './ui/Modal'
@@ -23,27 +24,37 @@ export function ListingCard({ listing }) {
 
   return (
     <>
-      <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h3 className="font-semibold text-slate-800">{listing.title}</h3>
-            {listing.location && <p className="text-sm text-slate-500">📍 {listing.location}</p>}
+            <h3 className="font-semibold text-slate-800 dark:text-slate-100">{listing.title}</h3>
+            {listing.location && (
+              <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                <MapPin size={12} /> {listing.location}
+              </p>
+            )}
           </div>
           <Badge label={listing.status} />
         </div>
 
         {listing.price && (
-          <p className="text-emerald-700 font-semibold">₱{Number(listing.price).toLocaleString()}/mo</p>
+          <p className="text-brand-600 dark:text-brand-400 font-semibold">₱{Number(listing.price).toLocaleString()}/mo</p>
         )}
 
         {listing.description && (
-          <p className="text-sm text-slate-600 line-clamp-2">{listing.description}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{listing.description}</p>
         )}
 
-        <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100">
-          <Button size="sm" variant="ghost" onClick={() => setFbOpen(true)}>📢 FB Post</Button>
-          <Button size="sm" variant="secondary" onClick={() => setEditOpen(true)}>Edit</Button>
-          <Button size="sm" variant="danger" onClick={handleDelete}>Delete</Button>
+        <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+          <Button size="sm" variant="ghost" onClick={() => setFbOpen(true)}>
+            <Megaphone size={13} /> FB Post
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => setEditOpen(true)}>
+            <Pencil size={13} /> Edit
+          </Button>
+          <Button size="sm" variant="danger" onClick={handleDelete}>
+            <Trash2 size={13} /> Delete
+          </Button>
         </div>
       </div>
 

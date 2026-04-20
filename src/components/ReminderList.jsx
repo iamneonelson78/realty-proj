@@ -1,6 +1,5 @@
 import { useReminders, useCompleteReminder, useCreateReminder } from '../hooks/useReminders'
 import { Button } from './ui/Button'
-import { Input } from './ui/Input'
 import { useState } from 'react'
 
 function formatDate(dt) {
@@ -31,15 +30,15 @@ export function ReminderList({ leadId, compact }) {
   return (
     <div className="flex flex-col gap-3">
       {filtered.length === 0 && !adding && (
-        <p className="text-sm text-slate-400">No upcoming reminders.</p>
+        <p className="text-sm text-slate-400 dark:text-slate-500">No upcoming reminders.</p>
       )}
       {filtered.map((r) => (
-        <div key={r.id} className="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div key={r.id} className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl">
           <div className="flex-1">
-            <p className="text-sm font-medium text-slate-800">{r.title}</p>
-            <p className="text-xs text-slate-500">{formatDate(r.remind_at)}</p>
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{r.title}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(r.remind_at)}</p>
             {!leadId && r.leads?.name && (
-              <p className="text-xs text-slate-400">Lead: {r.leads.name}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">Lead: {r.leads.name}</p>
             )}
           </div>
           <Button size="sm" variant="secondary" onClick={() => complete.mutate(r.id)}>
@@ -49,9 +48,19 @@ export function ReminderList({ leadId, compact }) {
       ))}
 
       {adding ? (
-        <form onSubmit={handleCreate} className="flex flex-col gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
-          <Input placeholder="Reminder title" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <Input type="datetime-local" value={remindAt} onChange={(e) => setRemindAt(e.target.value)} />
+        <form onSubmit={handleCreate} className="flex flex-col gap-2 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+          <input
+            className="border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-sm bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            placeholder="Reminder title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <input
+            type="datetime-local"
+            className="border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-sm bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            value={remindAt}
+            onChange={(e) => setRemindAt(e.target.value)}
+          />
           <div className="flex gap-2">
             <Button type="submit" size="sm" disabled={create.isPending}>
               {create.isPending ? 'Saving...' : 'Add'}

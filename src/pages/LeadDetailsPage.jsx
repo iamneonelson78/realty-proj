@@ -10,6 +10,7 @@ import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { Textarea } from '../components/ui/Input'
 import { Select } from '../components/ui/Select'
+import { Phone, Building2, ArrowLeft } from 'lucide-react'
 
 function formatDate(dt) {
   return new Date(dt).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' })
@@ -70,11 +71,11 @@ export function LeadDetailsPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
-  if (!lead) return <p className="text-slate-500 text-sm">Lead not found.</p>
+  if (!lead) return <p className="text-slate-500 dark:text-slate-400 text-sm">Lead not found.</p>
 
   const handleUpdate = async (values) => {
     await update.mutateAsync({ id, updates: values })
@@ -100,17 +101,25 @@ export function LeadDetailsPage() {
 
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-6">
-      <button onClick={() => navigate('/leads')} className="text-slate-400 hover:text-slate-600 text-sm self-start">
-        ← Back to Pipeline
+      <button onClick={() => navigate('/leads')} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 text-sm self-start flex items-center gap-1">
+        <ArrowLeft size={14} /> Back to Pipeline
       </button>
 
       {/* Lead Info */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-xl font-bold text-slate-800">{lead.name}</h1>
-            {lead.contact_number && <p className="text-slate-500 text-sm">📞 {lead.contact_number}</p>}
-            {lead.listings?.title && <p className="text-slate-500 text-sm">🏢 {lead.listings.title}</p>}
+            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">{lead.name}</h1>
+            {lead.contact_number && (
+              <p className="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1.5 mt-1">
+                <Phone size={13} /> {lead.contact_number}
+              </p>
+            )}
+            {lead.listings?.title && (
+              <p className="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1.5 mt-1">
+                <Building2 size={13} /> {lead.listings.title}
+              </p>
+            )}
           </div>
           <div className="flex flex-col items-end gap-2">
             <Badge label={lead.source} />
@@ -132,14 +141,14 @@ export function LeadDetailsPage() {
       </div>
 
       {/* Messages */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-        <h2 className="font-semibold text-slate-700 mb-3">Notes / Messages</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">Notes / Messages</h2>
         <div className="flex flex-col gap-2 mb-4 max-h-64 overflow-y-auto">
-          {messages.length === 0 && <p className="text-sm text-slate-400">No messages yet.</p>}
+          {messages.length === 0 && <p className="text-sm text-slate-400 dark:text-slate-500">No messages yet.</p>}
           {messages.map((msg) => (
-            <div key={msg.id} className="bg-slate-50 rounded-lg p-3">
-              <p className="text-sm text-slate-700">{msg.body}</p>
-              <p className="text-xs text-slate-400 mt-1">{formatDate(msg.created_at)}</p>
+            <div key={msg.id} className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+              <p className="text-sm text-slate-700 dark:text-slate-200">{msg.body}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{formatDate(msg.created_at)}</p>
             </div>
           ))}
         </div>
@@ -157,8 +166,8 @@ export function LeadDetailsPage() {
       </div>
 
       {/* Reminders */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-        <h2 className="font-semibold text-slate-700 mb-3">Reminders</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">Reminders</h2>
         <ReminderList leadId={id} />
         <div className="mt-3">
           <AddReminderInline leadId={id} />
