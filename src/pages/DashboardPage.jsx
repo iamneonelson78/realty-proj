@@ -7,6 +7,13 @@ import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { Modal } from '../components/ui/Modal'
 import { useNavigate } from 'react-router-dom'
+import { CheckCircle2, Clock } from 'lucide-react'
+
+const MOCK_FOLLOWUPS = [
+  { id: 1, name: 'Juan Dela Cruz', listing: 'Condo Unit A — BGC', time: '2:00 PM', done: false },
+  { id: 2, name: 'Maria Santos',   listing: '1BR Studio — Makati', time: '3:30 PM', done: false },
+  { id: 3, name: 'Pedro Reyes',    listing: 'Townhouse C — Pasig', time: '5:00 PM', done: false },
+]
 
 function StatCard({ label, value, color }) {
   return (
@@ -29,6 +36,9 @@ export function DashboardPage() {
   const available = listings.filter((l) => l.status === 'available').length
   const activeLeads = leads.filter((l) => !['closed'].includes(l.status)).length
   const closed = leads.filter((l) => l.status === 'closed').length
+  const [followUps, setFollowUps] = useState(MOCK_FOLLOWUPS)
+
+  const markDone = (id) => setFollowUps((prev) => prev.map((f) => f.id === id ? { ...f, done: true } : f))
 
   const handleAddReminder = async (e) => {
     e.preventDefault()
@@ -87,6 +97,40 @@ export function DashboardPage() {
             </ul>
           )}
         </div>
+      </div>
+
+      {/* Today's Follow-ups */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <Clock size={16} className="text-brand-600 dark:text-brand-400" />
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200">Today's Follow-ups</h2>
+          <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{followUps.filter((f) => !f.done).length} remaining</span>
+        </div>
+        {followUps.length === 0 ? (
+          <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-4">No follow-ups for today 🎉</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {followUps.map((f) => (
+              <li key={f.id} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${f.done ? 'opacity-50 bg-slate-50 dark:bg-slate-800/50' : 'bg-slate-50 dark:bg-slate-800'}`}>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium text-slate-800 dark:text-slate-100 ${f.done ? 'line-through' : ''}`}>{f.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{f.listing}</p>
+                </div>
+                <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">{f.time}</span>
+                {f.done ? (
+                  <CheckCircle2 size={18} className="text-green-500 shrink-0" />
+                ) : (
+                  <button
+                    onClick={() => markDone(f.id)}
+                    className="text-xs text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 font-medium whitespace-nowrap border border-brand-200 dark:border-brand-800 rounded-lg px-2 py-1 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors"
+                  >
+                    Mark as Done
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {reminderOpen && (

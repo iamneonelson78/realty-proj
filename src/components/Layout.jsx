@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Building2, Kanban, LogOut, Sun, Moon, Monitor,
-  Bell, HelpCircle, ChevronDown, PanelLeftClose, PanelLeftOpen, Menu, X,
+  Bell, HelpCircle, ChevronDown, PanelLeftClose, PanelLeftOpen, Menu, X, Users,
 } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import { useThemeStore } from '../store/themeStore'
@@ -16,7 +16,54 @@ const NAV_ITEMS = [
   { to: '/leads',     label: 'Pipeline',  Icon: Kanban },
 ]
 
+const TEAMS = ['My Team', 'Team A', 'Team B']
+
 const SIDEBAR_COLLAPSED_KEY = 'rental-crm-sidebar-collapsed'
+
+// ── Team Switcher ─────────────────────────────────────────────
+function TeamSwitcher() {
+  const [open, setOpen] = useState(false)
+  const [selected, setSelected] = useState('My Team')
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function handle(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors"
+      >
+        <Users size={14} className="text-slate-400 dark:text-slate-500" />
+        <span className="hidden sm:inline">{selected}</span>
+        <ChevronDown size={13} className="text-slate-400 dark:text-slate-500" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden z-50">
+          {TEAMS.map((team) => (
+            <button
+              key={team}
+              onClick={() => { setSelected(team); setOpen(false) }}
+              className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                selected === team
+                  ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-medium'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+              }`}
+            >
+              {team}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ── Avatar dropdown ──────────────────────────────────────────
 function AvatarMenu({ user, onSignOut }) {
@@ -226,7 +273,7 @@ export function Layout({ children }) {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Right: Help, Notifications, Avatar */}
+        {/* Right: Help, Notifications, Team, Avatar */}
         <div className="flex items-center gap-1">
           <button
             title="Help"
@@ -242,6 +289,7 @@ export function Layout({ children }) {
             {/* Notification dot */}
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-500 rounded-full ring-2 ring-white dark:ring-slate-900" />
           </button>
+          <TeamSwitcher />
           <AvatarMenu user={user} onSignOut={handleSignOut} />
         </div>
       </header>

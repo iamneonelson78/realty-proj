@@ -45,6 +45,18 @@ export function ListingCard({ listing }) {
           <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{listing.description}</p>
         )}
 
+        {/* Performance stats */}
+        <div className="flex gap-3 text-xs text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-blue-400" />
+            Leads: <span className="font-semibold text-slate-700 dark:text-slate-300">12</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-green-400" />
+            Closed: <span className="font-semibold text-slate-700 dark:text-slate-300">3</span>
+          </span>
+        </div>
+
         <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
           <Button size="sm" variant="ghost" onClick={() => setFbOpen(true)}>
             <Megaphone size={13} /> FB Post

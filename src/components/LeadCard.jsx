@@ -1,11 +1,15 @@
+import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useNavigate } from 'react-router-dom'
-import { Phone, Building2, ArrowRight } from 'lucide-react'
+import { Phone, Building2, ArrowRight, UserCircle2 } from 'lucide-react'
 import { Badge } from './ui/Badge'
+
+const MOCK_USERS = ['You', 'Maria Santos', 'Jose Reyes']
 
 export function LeadCard({ lead }) {
   const navigate = useNavigate()
+  const [assignedTo, setAssignedTo] = useState('You')
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: lead.id,
     data: { status: lead.status },
@@ -46,6 +50,20 @@ export function LeadCard({ lead }) {
       >
         View details <ArrowRight size={11} />
       </button>
+      {/* Assign to */}
+      <div
+        onPointerDown={(e) => e.stopPropagation()}
+        className="flex items-center gap-1.5 mt-1 pt-2 border-t border-slate-100 dark:border-slate-700"
+      >
+        <UserCircle2 size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />
+        <select
+          value={assignedTo}
+          onChange={(e) => setAssignedTo(e.target.value)}
+          className="flex-1 text-xs bg-transparent text-slate-500 dark:text-slate-400 border-none outline-none cursor-pointer"
+        >
+          {MOCK_USERS.map((u) => <option key={u} value={u}>{u}</option>)}
+        </select>
+      </div>
     </div>
   )
 }
